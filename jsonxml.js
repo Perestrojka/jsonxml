@@ -102,7 +102,7 @@ _format = (out, wrap, type, depth) => wrap ? `<${wrap}>${out}</${wrap}>` : out
  * @returns {_formatter~_format} A formatting function
  */
 /**
- * Outputs an indented XML-like string
+ * Outputs an indented XML-like string 
  * @callback _formatter~_format
  * @param {string} out - The string value to format
  * @param {boolean|string} wrap - A tag that the output should be wrapped with or a falsy value if none
