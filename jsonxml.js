@@ -57,24 +57,27 @@ function _parse(obj, wrap = false, depth = 0) {
     let out = ''
     let type = jsonTypeOf(obj)
 
-    switch(type) {
-        case 'null' :
+    switch (type) {
+        case 'null':
             out = 'null'
             break
-        case 'string' :
+        case 'string':
             out = obj
             break
-        case 'boolean' :
-        case 'number' :
+        case 'boolean':
+        case 'number':
             out = obj.toString()
             break
-        case 'object' :
-            out = Object.keys(obj).map(k => _parse(obj[k], k, depth+1)).join('')
+        case 'object':
+            out = Object.keys(obj).map(k => _parse(obj[k], k, depth + 1)).join('')
             break
-        case 'array' :
+        case 'array':
             out = obj.map(o => _parse(o, wrap, depth)).join('')
             wrap = false // each subelement is wrapped, not the array itself, depth is not increased for formatting
             break
+        case 'date':
+        out = obj.toISOString()
+        break
     }
 
     return _format(out, wrap, type, depth)
@@ -110,7 +113,7 @@ _format = (out, wrap, type, depth) => wrap ? `<${wrap}>${out}</${wrap}>` : out
 _formatter = (indent) => (out, wrap, type, depth) => {
     if (!wrap) return out
 
-    let tab = indent.repeat(depth-1)
+    let tab = indent.repeat(depth - 1)
     if (type === 'object')
         return `${tab}<${wrap}>\n${out}${tab}</${wrap}>\n`
     else
@@ -127,6 +130,7 @@ function jsonTypeOf(obj) {
     if (t === 'object') {
         if (obj === null) return 'null'
         if (Array.isArray(obj)) return 'array'
+        if (obj instanceof Date) return 'date'
     }
     return t
 }
