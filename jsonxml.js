@@ -56,10 +56,11 @@ module.exports.DEFAULT_XML_HEADER = DEFAULT_XML_HEADER
 function _parse(obj, wrap = false, depth = 0) {
     let out = ''
     let type = jsonTypeOf(obj)
-
+    let skip = false
     switch (type) {
         case 'null':
             out = 'null'
+            skip = true
             break
         case 'string':
             out = obj
@@ -76,10 +77,16 @@ function _parse(obj, wrap = false, depth = 0) {
             wrap = false // each subelement is wrapped, not the array itself, depth is not increased for formatting
             break
         case 'date':
-        out = obj.toISOString()
-        break
+            out = obj.toISOString()
+            break
+        case 'undefined':
+            skip = true
+            break
     }
 
+    if (skip == true) {
+        return ""
+    }
     return _format(out, wrap, type, depth)
 }
 
@@ -131,6 +138,9 @@ function jsonTypeOf(obj) {
         if (obj === null) return 'null'
         if (Array.isArray(obj)) return 'array'
         if (obj instanceof Date) return 'date'
+    }
+    if (t === "undefined") {
+        return 'undefined'
     }
     return t
 }
